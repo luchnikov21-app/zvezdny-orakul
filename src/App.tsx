@@ -154,19 +154,67 @@ function App() {
 
       {/* Совместимость */}
       {activeTab === 'compatibility' && (
-        <div className="p-6 text-center">
-          <h2 className="text-3xl mb-8">Совместимость</h2>
-          <div className="text-7xl mb-6">❤️</div>
-          <p className="text-2xl mb-8">Ты ({userSign}) + любимый человек</p>
-          <div className="bg-white/10 p-10 rounded-3xl">
-            <div className="text-8xl font-bold text-yellow-300">87%</div>
-            <p className="text-xl mt-4">Идеальная пара сегодня!</p>
+  <div className="p-6 min-h-screen flex flex-col items-center">
+    <h2 className="text-4xl font-bold text-center mb-8 glow-gold">Совместимость</h2>
+
+    <div className="flex gap-8 items-center mb-10">
+      {/* Твой знак */}
+      <div className="text-center">
+        <div className="text-7xl mb-3">♌</div>
+        <p className="text-xl font-medium text-yellow-300">{userSign}</p>
+      </div>
+
+      <div className="text-6xl text-pink-400 animate-pulse">❤️</div>
+
+      {/* Знак партнёра */}
+      <div className="text-center">
+        <div className="text-7xl mb-3">♓</div>
+        <p className="text-xl font-medium text-purple-300">Рыбы</p>
+      </div>
+    </div>
+
+    {/* Анимированный процент */}
+    <div className="text-center mb-12">
+      <div className="text-[120px] font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 leading-none">
+        {compatibility}%
+      </div>
+      <p className="text-2xl text-white/70 -mt-4">совместимость</p>
+    </div>
+
+    {/* Прогресс-бары с анимацией */}
+    <div className="w-full max-w-xs space-y-8">
+      {[
+        { label: 'Любовь', percent: 92, color: 'from-pink-500 to-rose-500' },
+        { label: 'Карьера', percent: 78, color: 'from-yellow-400 to-amber-500' },
+        { label: 'Дружба', percent: 95, color: 'from-purple-500 to-violet-500' },
+      ].map((item, i) => (
+        <div key={i}>
+          <div className="flex justify-between text-sm mb-1">
+            <span>{item.label}</span>
+            <span className="font-medium">{item.percent}%</span>
           </div>
-          <button onClick={() => buyPremium('Полная совместимость', 19)} className="mt-10 w-full py-6 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold text-xl rounded-3xl">
-            Узнать всё — 19 Stars
-          </button>
+          <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+            <div 
+              className={`h-full bg-gradient-to-r ${item.color} rounded-full transition-all duration-1500 ease-out`}
+              style={{ width: `${item.percent}%` }}
+            />
+          </div>
         </div>
-      )}
+      ))}
+    </div>
+
+    <div className="mt-12 text-center text-sm text-white/60">
+      Сегодня звёзды особенно благосклонны к вам ✨
+    </div>
+
+    <button 
+      onClick={() => buyPremium('Полная совместимость (любовь, карьера, секс)', 19)}
+      className="mt-10 w-full py-6 bg-gradient-to-r from-pink-500 via-purple-500 to-violet-500 text-white font-bold text-xl rounded-3xl shadow-2xl shadow-purple-500/50"
+    >
+      Узнать всё за 19 Stars
+    </button>
+  </div>
+)}
 
       {/* Магазин */}
       {activeTab === 'shop' && (
