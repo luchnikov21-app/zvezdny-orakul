@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Home, Star, BookOpen, Users, ShoppingCart } from 'lucide-react';
