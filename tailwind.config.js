@@ -5,8 +5,13 @@ export default {
     extend: {
       colors: {
         cosmic: '#0a0a1f',
-        gold: '#f5c242',
-        purple: '#6b21a8',
+        deep: '#1a0033',
+        neonGold: '#f5c242',
+        neonPurple: '#c026d3',
+      },
+      boxShadow: {
+        'gold': '0 0 25px #f5c242',
+        'purple': '0 0 25px #c026d3',
       }
     }
   }
