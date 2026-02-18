@@ -9,27 +9,63 @@ const BOT_USERNAME = 'ZvezdnyOrakulBot';
 
 const webApp = window.Telegram?.WebApp;
 
+const signs = ['Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева', 'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'];
+
 const horoscopes = [
-  { sign: 'Овен', text: 'Сегодня твоя энергия бьёт через край! Вселенная даёт зелёный свет для новых начинаний и смелых решений.' },
-  { sign: 'Телец', text: 'Финансовая удача на твоей стороне. Не упусти выгодные предложения и приятные подарки.' },
-  { sign: 'Близнецы', text: 'Общение принесёт неожиданные возможности. Твой ум работает на максимуме!' },
-  { sign: 'Рак', text: 'Сегодня важно слушать сердце. Семья и близкие люди — твой главный ресурс.' },
-  { sign: 'Лев', text: 'Ты — король дня! Смело заявляй о себе, успех и внимание гарантированы.' },
+  { sign: 'Овен', text: 'Сегодня твоя энергия бьёт через край! Вселенная даёт зелёный свет для новых начинаний.' },
+  { sign: 'Телец', text: 'Финансовая удача на твоей стороне. Не упусти выгодные предложения.' },
+  { sign: 'Близнецы', text: 'Общение принесёт неожиданные возможности и приятные встречи.' },
+  { sign: 'Рак', text: 'Сегодня важно слушать сердце. Семья и близкие — твой главный ресурс.' },
+  { sign: 'Лев', text: 'Ты — король дня! Смело заявляй о себе, успех гарантирован.' },
   { sign: 'Дева', text: 'Порядок и внимание к деталям принесут отличные результаты.' },
-  { sign: 'Весы', text: 'Гармония и красота на первом месте. Идеальный день для любви и переговоров.' },
+  { sign: 'Весы', text: 'Гармония и красота на первом месте. Идеальный день для любви.' },
   { sign: 'Скорпион', text: 'Глубокие эмоции и мощная интуиция. Сегодня ты магнитом притягиваешь людей.' },
-  { sign: 'Стрелец', text: 'Приключения зовут! Смело планируй будущее — Вселенная поддержит.' },
+  { sign: 'Стрелец', text: 'Приключения зовут! Смело планируй будущее.' },
   { sign: 'Козерог', text: 'Твоё упорство сегодня приносит первые серьёзные плоды.' },
   { sign: 'Водолей', text: 'Оригинальные идеи и свобода. Мир сегодня твой.' },
   { sign: 'Рыбы', text: 'Интуиция на пике. Слушай сердце — оно не обманет.' }
 ];
 
+// Реальная астрологическая совместимость (классическая)
+const compatibilityTable = {
+  'Овен': { 'Овен': 75, 'Телец': 60, 'Близнецы': 85, 'Рак': 65, 'Лев': 95, 'Дева': 70, 'Весы': 80, 'Скорпион': 55, 'Стрелец': 90, 'Козерог': 65, 'Водолей': 85, 'Рыбы': 70 },
+  'Телец': { 'Овен': 60, 'Телец': 80, 'Близнецы': 65, 'Рак': 90, 'Лев': 70, 'Дева': 95, 'Весы': 75, 'Скорпион': 85, 'Стрелец': 60, 'Козерог': 90, 'Водолей': 55, 'Рыбы': 80 },
+  'Близнецы': { 'Овен': 85, 'Телец': 65, 'Близнецы': 70, 'Рак': 75, 'Лев': 80, 'Дева': 65, 'Весы': 90, 'Скорпион': 70, 'Стрелец': 85, 'Козерог': 60, 'Водолей': 95, 'Рыбы': 75 },
+  'Рак': { 'Овен': 65, 'Телец': 90, 'Близнецы': 75, 'Рак': 80, 'Лев': 70, 'Дева': 85, 'Весы': 70, 'Скорпион': 95, 'Стрелец': 65, 'Козерог': 80, 'Водолей': 60, 'Рыбы': 90 },
+  'Лев': { 'Овен': 95, 'Телец': 70, 'Близнецы': 80, 'Рак': 70, 'Лев': 75, 'Дева': 65, 'Весы': 85, 'Скорпион': 75, 'Стрелец': 90, 'Козерог': 70, 'Водолей': 80, 'Рыбы': 65 },
+  'Дева': { 'Овен': 70, 'Телец': 95, 'Близнецы': 65, 'Рак': 85, 'Лев': 65, 'Дева': 80, 'Весы': 70, 'Скорпион': 80, 'Стрелец': 60, 'Козерог': 90, 'Водолей': 65, 'Рыбы': 75 },
+  'Весы': { 'Овен': 80, 'Телец': 75, 'Близнецы': 90, 'Рак': 70, 'Лев': 85, 'Дева': 70, 'Весы': 75, 'Скорпион': 65, 'Стрелец': 80, 'Козерог': 70, 'Водолей': 90, 'Рыбы': 80 },
+  'Скорпион': { 'Овен': 55, 'Телец': 85, 'Близнецы': 70, 'Рак': 95, 'Лев': 75, 'Дева': 80, 'Весы': 65, 'Скорпион': 80, 'Стрелец': 70, 'Козерог': 85, 'Водолей': 60, 'Рыбы': 90 },
+  'Стрелец': { 'Овен': 90, 'Телец': 60, 'Близнецы': 85, 'Рак': 65, 'Лев': 90, 'Дева': 60, 'Весы': 80, 'Скорпион': 70, 'Стрелец': 75, 'Козерог': 65, 'Водолей': 85, 'Рыбы': 70 },
+  'Козерог': { 'Овен': 65, 'Телец': 90, 'Близнецы': 60, 'Рак': 80, 'Лев': 70, 'Дева': 90, 'Весы': 70, 'Скорпион': 85, 'Стрелец': 65, 'Козерог': 80, 'Водолей': 75, 'Рыбы': 70 },
+  'Водолей': { 'Овен': 85, 'Телец': 55, 'Близнецы': 95, 'Рак': 60, 'Лев': 80, 'Дева': 65, 'Весы': 90, 'Скорпион': 60, 'Стрелец': 85, 'Козерог': 75, 'Водолей': 75, 'Рыбы': 80 },
+  'Рыбы': { 'Овен': 70, 'Телец': 80, 'Близнецы': 75, 'Рак': 90, 'Лев': 65, 'Дева': 75, 'Весы': 80, 'Скорпион': 90, 'Стрелец': 70, 'Козерог': 70, 'Водолей': 80, 'Рыбы': 80 }
+};
+
 function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [userSign, setUserSign] = useState('Овен');
+  const [partnerSign, setPartnerSign] = useState('Лев');
+  const [compatibility, setCompatibility] = useState(87);
   const [dailyCard, setDailyCard] = useState(null);
   const [selectedCards, setSelectedCards] = useState([]);
   const [isFlipped, setIsFlipped] = useState(false);
+
+  // Анимированный счётчик совместимости
+  useEffect(() => {
+    if (activeTab === 'compatibility') {
+      const percent = compatibilityTable[userSign]?.[partnerSign] || 75;
+      let current = 0;
+      const interval = setInterval(() => {
+        current += Math.ceil((percent - current) / 6);
+        if (current >= percent) {
+          current = percent;
+          clearInterval(interval);
+        }
+        setCompatibility(current);
+      }, 35);
+    }
+  }, [activeTab, userSign, partnerSign]);
 
   useEffect(() => {
     webApp?.ready();
@@ -39,22 +75,22 @@ function App() {
     setDailyCard(randomCard);
   }, []);
 
-  const buyPremium = (title, amount) => {
-    alert(`Покупка "${title}" за ${amount} Stars ✨`);
-    confetti({ particleCount: 200, spread: 70 });
-  };
-
   const drawTarot = () => {
     const shuffled = [...tarotData].sort(() => 0.5 - Math.random()).slice(0, 3);
     setSelectedCards(shuffled);
     setIsFlipped(true);
-    confetti({ particleCount: 80, spread: 60 });
+    confetti({ particleCount: 100, spread: 70 });
+  };
+
+  const buyPremium = (title, amount) => {
+    alert(`Покупка "${title}" за ${amount} Stars ✨`);
+    confetti({ particleCount: 200, spread: 80 });
   };
 
   const sharePrediction = () => {
     const text = `✨ Мой гороскоп сегодня от Звёздного Оракула:\n${horoscopes.find(h => h.sign === userSign)?.text}\n\nОткрывай свой: t.me/${BOT_USERNAME}?startapp`;
     navigator.clipboard.writeText(text);
-    alert('Текст скопирован! Отправь друзьям ❤️');
+    alert('Текст скопирован! Поделись в чате ❤️');
   };
 
   return (
@@ -111,11 +147,10 @@ function App() {
         </div>
       )}
 
-      {/* Таро - с полной колодой */}
+      {/* Таро */}
       {activeTab === 'tarot' && (
         <div className="p-6">
           <h2 className="text-3xl text-center mb-8 glow-gold">Расклад Таро</h2>
-          
           <button onClick={drawTarot} className="w-full py-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl text-xl font-bold mb-10">
             Вытянуть 3 карты
           </button>
@@ -123,11 +158,7 @@ function App() {
           <div className="grid grid-cols-3 gap-4">
             {selectedCards.map((card, i) => (
               <div key={i} className="relative">
-                <img 
-                  src={card.image} 
-                  className="rounded-2xl shadow-2xl w-full border border-yellow-400/30"
-                  alt={card.name}
-                />
+                <img src={card.image} className="rounded-2xl shadow-2xl w-full border border-yellow-400/30" alt={card.name} />
                 <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-xs p-3 rounded-b-2xl text-center">
                   {card.name}
                 </div>
@@ -152,69 +183,42 @@ function App() {
         </div>
       )}
 
-      {/* Совместимость */}
+      {/* Совместимость с выбором партнёра и анимацией */}
       {activeTab === 'compatibility' && (
-  <div className="p-6 min-h-screen flex flex-col items-center">
-    <h2 className="text-4xl font-bold text-center mb-8 glow-gold">Совместимость</h2>
+        <div className="p-6 min-h-screen flex flex-col items-center">
+          <h2 className="text-4xl font-bold text-center mb-10 glow-gold">Совместимость</h2>
 
-    <div className="flex gap-8 items-center mb-10">
-      {/* Твой знак */}
-      <div className="text-center">
-        <div className="text-7xl mb-3">♌</div>
-        <p className="text-xl font-medium text-yellow-300">{userSign}</p>
-      </div>
+          {/* Выбор знаков */}
+          <div className="w-full max-w-sm space-y-6 mb-12">
+            <div>
+              <p className="text-sm text-white/60 mb-2">Твой знак</p>
+              <select value={userSign} onChange={(e) => setUserSign(e.target.value)} className="w-full bg-white/10 border border-white/20 rounded-2xl p-4 text-xl">
+                {signs.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
 
-      <div className="text-6xl text-pink-400 animate-pulse">❤️</div>
-
-      {/* Знак партнёра */}
-      <div className="text-center">
-        <div className="text-7xl mb-3">♓</div>
-        <p className="text-xl font-medium text-purple-300">Рыбы</p>
-      </div>
-    </div>
-
-    {/* Анимированный процент */}
-    <div className="text-center mb-12">
-      <div className="text-[120px] font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 leading-none">
-        {compatibility}%
-      </div>
-      <p className="text-2xl text-white/70 -mt-4">совместимость</p>
-    </div>
-
-    {/* Прогресс-бары с анимацией */}
-    <div className="w-full max-w-xs space-y-8">
-      {[
-        { label: 'Любовь', percent: 92, color: 'from-pink-500 to-rose-500' },
-        { label: 'Карьера', percent: 78, color: 'from-yellow-400 to-amber-500' },
-        { label: 'Дружба', percent: 95, color: 'from-purple-500 to-violet-500' },
-      ].map((item, i) => (
-        <div key={i}>
-          <div className="flex justify-between text-sm mb-1">
-            <span>{item.label}</span>
-            <span className="font-medium">{item.percent}%</span>
+            <div>
+              <p className="text-sm text-white/60 mb-2">Знак партнёра</p>
+              <select value={partnerSign} onChange={(e) => setPartnerSign(e.target.value)} className="w-full bg-white/10 border border-white/20 rounded-2xl p-4 text-xl">
+                {signs.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
           </div>
-          <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-            <div 
-              className={`h-full bg-gradient-to-r ${item.color} rounded-full transition-all duration-1500 ease-out`}
-              style={{ width: `${item.percent}%` }}
-            />
+
+          {/* Большой анимированный процент */}
+          <div className="text-center mb-12">
+            <div className="text-[110px] font-black leading-none text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300">
+              {compatibility}
+            </div>
+            <p className="text-2xl -mt-6">%</p>
+            <p className="text-xl text-white/70">совместимость по звёздам</p>
           </div>
+
+          <button onClick={() => buyPremium('Полная совместимость (любовь, карьера, секс)', 19)} className="mt-auto w-full py-6 bg-gradient-to-r from-pink-500 via-purple-500 to-violet-500 text-white font-bold text-xl rounded-3xl shadow-2xl shadow-purple-500/50">
+            Узнать всё за 19 Stars
+          </button>
         </div>
-      ))}
-    </div>
-
-    <div className="mt-12 text-center text-sm text-white/60">
-      Сегодня звёзды особенно благосклонны к вам ✨
-    </div>
-
-    <button 
-      onClick={() => buyPremium('Полная совместимость (любовь, карьера, секс)', 19)}
-      className="mt-10 w-full py-6 bg-gradient-to-r from-pink-500 via-purple-500 to-violet-500 text-white font-bold text-xl rounded-3xl shadow-2xl shadow-purple-500/50"
-    >
-      Узнать всё за 19 Stars
-    </button>
-  </div>
-)}
+      )}
 
       {/* Магазин */}
       {activeTab === 'shop' && (
